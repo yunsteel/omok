@@ -1,4 +1,4 @@
-import { Coordinate, OmokItem } from "../../../types/omok";
+import { Coordinate, OmokItem } from "types/omok";
 
 const ZERO_POINT = 0.5;
 

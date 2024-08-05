@@ -1,32 +1,33 @@
-import { FC, MouseEventHandler, useCallback, useMemo, useRef } from "react";
+import { FC, MouseEventHandler, useCallback, useRef } from "react";
 import {
-  isCellOccupied,
   isFirstQuadrant,
   isFourthQuadrant,
   isSecondQuadrant,
   isThirdQuadrant,
 } from "./helper";
 import { useGirdContext } from "../context";
-import { Coordinate } from "../../../types/omok";
-import { Player } from "../../../types/Player";
+import { Coordinate } from "types/omok";
+import { Player } from "types/Player";
+import { twMerge } from "tailwind-merge";
 
-const CELL_SIZE = 40;
+const CELL_SIZE = 50;
 
 interface Props {
   coordinate: Coordinate;
   player: Player;
   onSwitchPlayer: () => void;
+  isOccupied: boolean;
 }
 
-const Cell: FC<Props> = ({ coordinate, onSwitchPlayer, player }) => {
-  const ref = useRef<HTMLTableCellElement>(null);
+const Cell: FC<Props> = ({
+  coordinate,
+  onSwitchPlayer,
+  player,
+  isOccupied,
+}) => {
+  const ref = useRef<HTMLButtonElement>(null);
 
-  const { handleAddOmokItem, grid } = useGirdContext();
-
-  const hasOmokItem = useMemo(
-    () => isCellOccupied({ coordinate, omokItemList: grid }),
-    [coordinate, grid]
-  );
+  const { handleAddOmokItem } = useGirdContext();
 
   const handleClickCell: MouseEventHandler = useCallback(
     (e) => {
@@ -72,31 +73,43 @@ const Cell: FC<Props> = ({ coordinate, onSwitchPlayer, player }) => {
 
       onSwitchPlayer();
     },
-    [coordinate]
+    [coordinate.x, coordinate.y, handleAddOmokItem, onSwitchPlayer, player]
   );
 
   return (
-    <td
-      ref={ref}
-      style={{
-        width: CELL_SIZE,
-        height: CELL_SIZE,
-      }}
-      className="border cursor-pointer border-black hover:bg-black text-xs relative bg-amber-600"
-      onClick={handleClickCell}
-    >
-      {hasOmokItem && (
-        <span
-          style={{
-            width: CELL_SIZE / 2,
-            height: CELL_SIZE / 2,
-          }}
-          className="bg-black rounded-full absolute left-1/2 top-1/2 translate-x-1/2 translate-y-1/2 z-10"
-        />
-      )}
-      ({coordinate.x}, {coordinate.y})
+    <td className="p-0 border-black border">
+      <button
+        ref={ref}
+        style={{
+          width: CELL_SIZE,
+          height: CELL_SIZE,
+        }}
+        className="block cursor-pointer relative bg-amber-600"
+        onClick={handleClickCell}
+      >
+        {isOccupied && <Stone stoneColor="BLACK" />}
+      </button>
     </td>
   );
 };
 
 export default Cell;
+
+interface StoneProps {
+  stoneColor: "BLACK" | "WHITE";
+}
+
+const Stone: FC<StoneProps> = ({ stoneColor }) => {
+  return (
+    <span
+      style={{
+        width: CELL_SIZE / 2,
+        height: CELL_SIZE / 2,
+      }}
+      className={twMerge(
+        "rounded-full absolute z-10 -top-1/2 translate-y-1/2 -left-1/2 translate-x-1/2",
+        stoneColor === "BLACK" ? "bg-black" : "bg-white"
+      )}
+    />
+  );
+};

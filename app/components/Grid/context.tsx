@@ -6,7 +6,8 @@ import {
   useMemo,
   useState,
 } from "react";
-import { OmokItem } from "../../types/omok";
+import { OmokItem } from "types/omok";
+import { isCellOccupied } from "./Cell/helper";
 
 interface GridContextValue {
   grid: OmokItem[];
@@ -28,11 +29,29 @@ export const useGirdContext = () => {
 export const GirdContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [grid, setGrid] = useState<OmokItem[]>([]);
 
+  const handleClearGrid = () => setGrid([]);
+
   const handleAddOmokItem = (item: OmokItem) => {
-    setGrid((prev) => [...prev, item]);
+    setGrid((prev) => {
+      if (!prev) return prev;
+
+      const isOccupied = isCellOccupied({
+        coordinate: item,
+        omokItemList: prev,
+      });
+
+      if (isOccupied) {
+        return prev;
+      } else {
+        [...prev, item];
+      }
+    });
   };
 
-  const context = useMemo(() => ({ grid, handleAddOmokItem }), []);
+  const context = useMemo(
+    () => ({ grid, handleAddOmokItem, handleClearGrid }),
+    [grid]
+  );
 
   return (
     <GridContext.Provider value={context}>{children}</GridContext.Provider>
