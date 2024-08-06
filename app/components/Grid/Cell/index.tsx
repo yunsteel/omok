@@ -5,29 +5,22 @@ import {
   isSecondQuadrant,
   isThirdQuadrant,
 } from "./helper";
-import { useGirdContext } from "../context";
-import { Coordinate } from "types/omok";
-import { Player } from "types/Player";
+import { Coordinate, OmokItem } from "types/omok";
 import { twMerge } from "tailwind-merge";
+import { useGridStore } from "../store";
 
 const CELL_SIZE = 50;
 
 interface Props {
   coordinate: Coordinate;
-  player: Player;
-  onSwitchPlayer: () => void;
-  isOccupied: boolean;
+  omokItem: OmokItem | undefined;
+  isEdge?: boolean;
 }
 
-const Cell: FC<Props> = ({
-  coordinate,
-  onSwitchPlayer,
-  player,
-  isOccupied,
-}) => {
+const Cell: FC<Props> = ({ coordinate, isEdge, omokItem }) => {
   const ref = useRef<HTMLButtonElement>(null);
 
-  const { handleAddOmokItem } = useGirdContext();
+  const addOmokItem = useGridStore((state) => state.addOmokItem);
 
   const handleClickCell: MouseEventHandler = useCallback(
     (e) => {
@@ -41,53 +34,54 @@ const Cell: FC<Props> = ({
       const updatedAt = new Date();
 
       if (isFirstQuadrant(XAxisPercent, YAxisPercent)) {
-        handleAddOmokItem({
-          player,
+        addOmokItem({
           updatedAt,
           x: coordinate.x,
           y: coordinate.y + 1,
         });
       } else if (isSecondQuadrant(XAxisPercent, YAxisPercent)) {
-        handleAddOmokItem({
-          player,
+        addOmokItem({
           updatedAt,
           x: coordinate.x,
           y: coordinate.y,
         });
       } else if (isThirdQuadrant(XAxisPercent, YAxisPercent)) {
-        handleAddOmokItem({
-          player,
+        addOmokItem({
           updatedAt,
-          x: coordinate.x,
-          y: coordinate.y + 1,
+          x: coordinate.x + 1,
+          y: coordinate.y,
         });
         return;
       } else if (isFourthQuadrant(XAxisPercent, YAxisPercent)) {
-        handleAddOmokItem({
-          player,
+        addOmokItem({
           updatedAt,
           x: coordinate.x + 1,
           y: coordinate.y + 1,
         });
       }
-
-      onSwitchPlayer();
     },
-    [coordinate.x, coordinate.y, handleAddOmokItem, onSwitchPlayer, player]
+    [coordinate.x, coordinate.y, addOmokItem]
   );
 
   return (
-    <td className="p-0 border-black border">
+    <td className={twMerge("p-0 border-black border", isEdge && "border-none")}>
       <button
         ref={ref}
         style={{
           width: CELL_SIZE,
           height: CELL_SIZE,
         }}
-        className="block cursor-pointer relative bg-amber-600"
+        className={twMerge(
+          "block relative",
+          isEdge ? "bg-transparent" : "bg-amber-400 cursor-pointer"
+        )}
+        disabled={isEdge}
         onClick={handleClickCell}
       >
-        {isOccupied && <Stone stoneColor="BLACK" />}
+        {coordinate.x}, {coordinate.y}
+        {omokItem && (
+          <Stone stoneColor={omokItem.player === "나" ? "BLACK" : "WHITE"} />
+        )}
       </button>
     </td>
   );
@@ -107,7 +101,7 @@ const Stone: FC<StoneProps> = ({ stoneColor }) => {
         height: CELL_SIZE / 2,
       }}
       className={twMerge(
-        "rounded-full absolute z-10 -top-1/2 translate-y-1/2 -left-1/2 translate-x-1/2",
+        "rounded-full absolute z-10 -top-1/2 translate-y-1/2 -left-1/2 translate-x-1/2 shadow",
         stoneColor === "BLACK" ? "bg-black" : "bg-white"
       )}
     />
