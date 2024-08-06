@@ -10,6 +10,7 @@ import { twMerge } from "tailwind-merge";
 import { useGridStore } from "../store";
 
 const CELL_SIZE = 50;
+const STONE_SIZE = 50 * 0.8;
 
 interface Props {
   coordinate: Coordinate;
@@ -97,12 +98,15 @@ const Stone: FC<StoneProps> = ({ stoneColor }) => {
   return (
     <span
       style={{
-        width: CELL_SIZE / 2,
-        height: CELL_SIZE / 2,
+        width: STONE_SIZE,
+        height: STONE_SIZE,
+        top: -STONE_SIZE,
+        left: -STONE_SIZE,
+        transform: `translate(${50}%, ${50}%)`,
       }}
       className={twMerge(
-        "rounded-full absolute z-10 -top-1/2 translate-y-1/2 -left-1/2 translate-x-1/2 shadow",
-        stoneColor === "BLACK" ? "bg-black" : "bg-white"
+        stoneColor === "BLACK" ? "bg-black" : "bg-white",
+        "rounded-full absolute z-10 translate-y-1/2 translate-x-1/2 shadow"
       )}
     />
   );
