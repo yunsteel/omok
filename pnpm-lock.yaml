@@ -26,6 +26,9 @@ dependencies:
   express:
     specifier: ^4.19.2
     version: 4.19.2
+  immer:
+    specifier: 10.1.1
+    version: 10.1.1
   isbot:
     specifier: ^4.1.0
     version: 4.4.0
@@ -49,7 +52,7 @@ dependencies:
     version: 2.4.0
   zustand:
     specifier: 4.5.4
-    version: 4.5.4(@types/react@18.3.3)(react@18.3.1)
+    version: 4.5.4(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
 
 devDependencies:
   '@remix-run/dev':
@@ -3693,6 +3696,10 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
+  /immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+    dev: false
+
   /import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -6754,7 +6761,7 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zustand@4.5.4(@types/react@18.3.3)(react@18.3.1):
+  /zustand@4.5.4(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1):
     resolution: {integrity: sha512-/BPMyLKJPtFEvVL0E9E9BTUM63MNyhPGlvxk1XjrfWTUlV+BR8jufjsovHzrtR6YNcBEcL7cMHovL1n9xHawEg==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
@@ -6770,6 +6777,7 @@ packages:
         optional: true
     dependencies:
       '@types/react': 18.3.3
+      immer: 10.1.1
       react: 18.3.1
       use-sync-external-store: 1.2.0(react@18.3.1)
     dev: false

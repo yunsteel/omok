@@ -21,7 +21,7 @@ interface Props {
 const Cell: FC<Props> = ({ coordinate, isEdge, omokItem }) => {
   const ref = useRef<HTMLButtonElement>(null);
 
-  const addOmokItem = useGridStore((state) => state.addOmokItem);
+  const addOmokItem = useGridStore((state) => state.addStone);
 
   const handleClickCell: MouseEventHandler = useCallback(
     (e) => {

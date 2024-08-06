@@ -1,7 +1,6 @@
-"use client";
-
 import type { MetaFunction } from "@remix-run/node";
 import Grid from "~/components/Grid";
+import GridSizeHandler from "~/components/Grid/SizeHandler";
 import { useGridStore } from "~/components/Grid/store";
 
 export const meta: MetaFunction = () => {
@@ -16,16 +15,25 @@ export default function Index() {
 
   return (
     <div className="font-sans p-4">
-      <button onClick={gridStore.clearGame}>Reset</button>
+      <button onClick={gridStore.resetGame}>Reset</button>
+      <GridSizeHandler />
       <Grid />
 
       {/* 임시 기록판 */}
       <div>
-        {gridStore.grid.map((item) => (
-          <div key={JSON.stringify(item)}>
-            {item.player}: {item.x}, {item.y}
-          </div>
-        ))}
+        {gridStore.grid
+          .filter((rows) => rows.length > 0)
+          .map((rows, x) => (
+            <div key={x}>
+              {rows
+                .filter((row) => row)
+                .map((cell) => (
+                  <div key={cell.x + cell.player + cell.y}>
+                    {cell.player} : {cell.x} {cell.y}
+                  </div>
+                ))}
+            </div>
+          ))}
       </div>
     </div>
   );
